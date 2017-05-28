@@ -1,0 +1,25 @@
+doctype html
+html
+  include includes/head
+  body
+    div(class=["container"])
+      h1 Hello, World 
+      p The head tags for this page are included from head.jade file, footer included from footer.jade file.
+      p The title for this page has taken as parameter title = #{title}.
+    include includes/footer
+    script(type="text/javascript").
+      window.onload = function(){console.log("Window loaded");};
+      $(function(){console.log("jQuery works!")
+        var Smartfon = function(name, number){
+          this.name = name;
+          this.number = number;
+        }
+        var sm1 = new Smartfon(89160000001, "Vasya");
+        var sm2 = new Smartfon(89160000002, "Alex");
+        Smartfon.prototype.material = "plastic";
+        console.log(sm1);
+        console.log(sm2);
+        sm1.material = "bronze";
+        console.log (sm1.material);
+        console.log (sm2.material);
+      }());
