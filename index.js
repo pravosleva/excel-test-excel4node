@@ -8,10 +8,16 @@ var http = require('http'),
 var url = require('url'),
   excel4node = require('excel4node');
 var app = express();
+
+let offersFolder = './docs/output';
+
 app.set('views', __dirname + '/views');
 app.set('view engine', 'jade');
 app.get('/', function(req, res){res.render('index', {title: 'Home'})});
 app.get('/xlCreate', function(req, res){
+  let urlParsed = url.parse(req.url, true),
+    { dirName, fileName } = urlParsed.query;
+
   var wb = new excel4node.Workbook();
   // Add Worksheets to the workbook
   var ws = wb.addWorksheet('Sheet 1');
@@ -20,7 +26,6 @@ app.get('/xlCreate', function(req, res){
     font: {
       color: '#FF0800',
       size: 12,
-
     },
     numberFormat: '$#,##0.00; ($#,##0.00); -'
   });
@@ -53,18 +58,23 @@ app.get('/xlCreate', function(req, res){
   });
   // --- ---
 
-  var urlParsed = url.parse(req.url, true);
-
-  fs.mkdir(`output/${urlParsed.query.dirName}`,function(e){
+  fs.mkdir(`${offersFolder}/${dirName}`,function(e){
+    /*
+      For local test `./docs/output/${dirName}`
+      But /output should be exist
+    */
     if(!e || (e && e.code === 'EEXIST')){
       //do something with contents
-    } else { console.log(e); }
+    } else {
+      console.log(e);
+    }
   });
 
-  wb.write(`output/${urlParsed.query.dirName}/${urlParsed.query.fileName}`, function (err, stats) {
-    if(err){//console.error(err);
+  wb.write(`${offersFolder}/${dirName}/${fileName}`, function (err, stats) {
+    if(err){
+      console.error(err);
       res.writeHead(200, {"Content-Type": "text/html; charset=UTF-8"});
-      res.end("<strong>Fuck up!</strong><br />" + err.message);
+      res.end(`<strong>Fuck up!</strong><br /><code>${err.message}</code>`);
     }else{
       res.writeHead(200, {"Content-Type": "text/html; charset=UTF-8"});
       res.end("<strong>DONE</strong>");
